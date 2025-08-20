@@ -1,0 +1,138 @@
+# Text2Cmd模块配置文件
+# AI大模型指令解析配置
+
+# AI提供商配置
+ai_provider: "deepseek"  # 可选: openai, deepseek, local
+
+# AI模型配置
+ai_configs:
+  openai:
+    model: "gpt-4"
+    temperature: 0.1
+    max_tokens: 2000
+    
+  deepseek:
+    model: "deepseek-chat"
+    temperature: 0.1
+    max_tokens: 2000
+    base_url: "https://api.deepseek.com"
+    
+  local:
+    model: "local-chat"
+    temperature: 0.1
+    max_tokens: 2000
+    base_url: "http://localhost:8000"
+    timeout: 30
+
+# 工作空间限制 (单位: cm)
+workspace_limits:
+  x: [-50.0, 50.0]    # X轴范围
+  y: [-50.0, 50.0]    # Y轴范围  
+  z: [0.0, 50.0]      # Z轴范围
+
+# 预定义位置 (单位: cm)
+predefined_positions:
+  原点: [0.0, 0.0, 0.0]
+  零点: [0.0, 0.0, 0.0]
+  初始位置: [0.0, 0.0, 30.0]
+  起始位置: [0.0, 0.0, 30.0]
+  家位置: [0.0, 0.0, 30.0]
+  安全位置: [0.0, 0.0, 35.0]
+  休息位置: [0.0, -20.0, 15.0]
+  待机位置: [0.0, -20.0, 15.0]
+  抓取位置: [20.0, 10.0, 5.0]
+  取货位置: [20.0, 10.0, 5.0]
+  放置位置: [-20.0, 10.0, 5.0]
+  卸货位置: [-20.0, 10.0, 5.0]
+  观察位置: [0.0, 0.0, 40.0]
+  检测位置: [0.0, 15.0, 25.0]
+
+# 速度关键词映射
+speed_keywords:
+  极慢: 0.1
+  非常慢: 0.15
+  很慢: 0.2
+  慢: 0.3
+  缓慢: 0.3
+  慢速: 0.3
+  低速: 0.3
+  正常: 0.5
+  一般: 0.5
+  普通: 0.5
+  中速: 0.5
+  标准: 0.5
+  快: 0.7
+  快速: 0.7
+  高速: 0.7
+  很快: 0.8
+  非常快: 0.9
+  极快: 0.95
+  最快: 1.0
+  全速: 1.0
+
+# 物体关键词列表
+object_keywords:
+  - "苹果"
+  - "香蕉"
+  - "橙子"
+  - "杯子"
+  - "瓶子"
+  - "盒子"
+  - "球"
+  - "积木"
+  - "螺丝"
+  - "零件"
+  - "工具"
+  - "物体"
+  - "物件"
+  - "东西"
+  - "货物"
+  - "产品"
+  - "元件"
+  - "组件"
+  - "材料"
+  - "样品"
+  - "试件"
+  - "模型"
+  - "玩具"
+  - "器具"
+
+# 默认运动参数
+default_motion_params:
+  speed: 0.5
+  acceleration: 0.3
+  deceleration: 0.3
+  jerk: 0.5
+  blend_radius: 0.0
+
+# 默认夹爪参数
+default_gripper_params:
+  force: 0.5
+  position: 0.5
+  speed: 0.5
+
+# 解析器设置
+parser_settings:
+  min_confidence_threshold: 0.3  # 最小置信度阈值
+  enable_rule_based_fallback: true  # 启用规则解析后备
+  enable_ai_parsing: true  # 启用AI解析
+  log_level: "INFO"  # 日志级别: DEBUG, INFO, WARNING, ERROR
+
+# auboi5机械臂特定配置
+auboi5_config:
+  joint_limits:  # 关节角度限制 (度)
+    joint1: [-170, 170]
+    joint2: [-135, 135] 
+    joint3: [-135, 135]
+    joint4: [-170, 170]
+    joint5: [-135, 135]
+    joint6: [-360, 360]
+  
+  max_speed: 1.0  # 最大速度
+  max_acceleration: 2.0  # 最大加速度
+  
+  coordinate_systems:
+    world: "世界坐标系"
+    base: "基座坐标系"
+    tool: "工具坐标系"
+    user: "用户坐标系"

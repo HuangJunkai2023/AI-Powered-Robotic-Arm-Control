@@ -1,0 +1,18 @@
+# Text2Cmd模块依赖包
+# AI大模型指令解析所需的Python包
+
+# 核心依赖
+openai>=1.0.0         # OpenAI API客户端
+requests>=2.31.0      # HTTP请求库
+pyyaml>=6.0          # YAML配置文件解析
+
+# 可选依赖（用于完整功能）
+pydantic>=2.0.0      # 数据验证和序列化
+python-dotenv>=1.0.0 # 环境变量管理
+
+# 开发和测试依赖
+pytest>=7.0.0        # 单元测试框架
+pytest-cov>=4.0.0    # 测试覆盖率
+
+# 文档生成
+sphinx>=5.0.0        # 文档生成工具
