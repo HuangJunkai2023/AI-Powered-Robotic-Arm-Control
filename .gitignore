@@ -281,3 +281,57 @@ Makefile
 cmake_install.cmake
 CTestTestfile.cmake
 _deps
+
+# ROS2 specific additions
+# colcon build artifacts
+build/
+install/
+log/
+.colcon_install_layout
+.colcon_build_layout
+
+# ROS2 parameter files (if containing sensitive data)
+*.params.yaml
+*_params.yaml
+
+# Gazebo specific
+.gazebo/
+
+# Robot specific log files
+robot_*.log
+arm_*.log
+trajectory_*.log
+
+# Configuration backups
+*.orig
+*.backup
+
+# Large data files
+*.bag
+*.mcap
+*.rosbag2
+
+# Network/Connection specific
+.ros/
+ros2_ws_*
+
+# Text2cmd module specific
+text2cmd/cache/
+text2cmd/logs/
+text2cmd/.api_cache/
+
+# Voice2text module specific  
+voice2text/recordings/
+voice2text/audio_cache/
+voice2text/temp_audio/
+
+# AI model downloads
+*.bin
+*.safetensors
+transformers_cache/
+huggingface_cache/
+
+# Development and testing
+test_outputs/
+debug_logs/
+*.debug
