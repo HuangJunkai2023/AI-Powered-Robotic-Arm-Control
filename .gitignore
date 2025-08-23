@@ -45,6 +45,10 @@ install_manifest.txt
 .DS_Store
 Thumbs.db
 
+# GitHub 和虚拟环境文件夹
+.github/
+.venv/
+
 # 日志文件
 *.log
 
