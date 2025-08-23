@@ -37,11 +37,12 @@ planner_configs:
     goal_bias: 0.05  # When close to goal select goal, with this probability? default: 0.05
   RRTConnect:
     type: geometric::RRTConnect
-    range: 0.0  # Max motion added to tree. ==> maxDistance_ default: 0.0, if 0.0, set on setup()
+    range: 0.1  # 增加运动范围以提高采样成功率
+    intermediate_states: true  # 启用中间状态
   RRTstar:
     type: geometric::RRTstar
-    range: 0.0  # Max motion added to tree. ==> maxDistance_ default: 0.0, if 0.0, set on setup()
-    goal_bias: 0.05  # When close to goal select goal, with this probability? default: 0.05
+    range: 0.1  # 增加运动范围
+    goal_bias: 0.1  # 增加目标偏置
     delay_collision_checking: 1  # Stop collision checking as soon as C-free parent found. default 1
   TRRT:
     type: geometric::TRRT
@@ -129,18 +130,18 @@ planner_configs:
     max_failures: 5000  # maximum consecutive failure limit. default: 5000
 manipulator_i5:
   planner_configs:
-    - AnytimePathShortening
-    - SBL
+    - RRTConnect
+    - RRTstar
     - EST
     - LBKPIECE
     - BKPIECE
     - KPIECE
     - RRT
-    - RRTConnect
-    - RRTstar
     - TRRT
     - PRM
     - PRMstar
+    - AnytimePathShortening
+    - SBL
     - FMT
     - BFMT
     - PDST
@@ -154,4 +155,5 @@ manipulator_i5:
     - SPARS
     - SPARStwo
   projection_evaluator: joints(shoulder_joint,upperArm_joint)
-  longest_valid_segment_fraction: 0.005
+  longest_valid_segment_fraction: 0.01  # 增加有效段分数以提高规划质量
+  enforce_constrained_state_space: false  # 禁用约束状态空间以提高采样成功率

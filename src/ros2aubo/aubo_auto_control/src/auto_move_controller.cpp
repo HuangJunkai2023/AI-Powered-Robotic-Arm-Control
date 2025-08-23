@@ -3,6 +3,7 @@
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include <moveit_msgs/action/move_group.hpp>
 #include <shape_msgs/msg/solid_primitive.hpp>
+#include <cmath>  // 添加数学函数
 
 typedef moveit_msgs::action::MoveGroup MoveGroupAction;
 
@@ -60,10 +61,33 @@ private:
             // 创建MoveGroup目标
             auto move_goal = MoveGroupAction::Goal();
             move_goal.request.group_name = "manipulator_i5";
-            move_goal.request.num_planning_attempts = 10;
-            move_goal.request.allowed_planning_time = 5.0;
-            move_goal.request.max_velocity_scaling_factor = 0.5;
-            move_goal.request.max_acceleration_scaling_factor = 0.5;
+            move_goal.request.num_planning_attempts = 20;  // 增加规划尝试次数
+            move_goal.request.allowed_planning_time = 10.0;  // 增加规划时间
+            move_goal.request.max_velocity_scaling_factor = 0.3;  // 降低速度
+            move_goal.request.max_acceleration_scaling_factor = 0.3;  // 降低加速度
+            move_goal.request.planner_id = "RRTConnect";  // 明确指定规划器
+
+            // 验证目标位姿的四元数
+            auto target_quat = target_pose.pose.orientation;
+            double quat_norm = sqrt(target_quat.x * target_quat.x + 
+                                   target_quat.y * target_quat.y + 
+                                   target_quat.z * target_quat.z + 
+                                   target_quat.w * target_quat.w);
+            
+            // 如果四元数为零或接近零，使用默认方向（单位四元数）
+            if (quat_norm < 0.1) {
+                RCLCPP_WARN(this->get_logger(), "检测到无效的目标方向，使用默认方向");
+                target_quat.x = 0.0;
+                target_quat.y = 0.0;
+                target_quat.z = 0.0;
+                target_quat.w = 1.0;
+            } else {
+                // 归一化四元数
+                target_quat.x /= quat_norm;
+                target_quat.y /= quat_norm;
+                target_quat.z /= quat_norm;
+                target_quat.w /= quat_norm;
+            }
 
             // 设置目标位姿
             move_goal.request.goal_constraints.resize(1);
@@ -78,18 +102,18 @@ private:
             pos_constraint.constraint_region.primitive_poses[0].position = target_pose.pose.position;
             pos_constraint.constraint_region.primitives.resize(1);
             pos_constraint.constraint_region.primitives[0].type = shape_msgs::msg::SolidPrimitive::SPHERE;
-            pos_constraint.constraint_region.primitives[0].dimensions = {0.01};  // 1cm tolerance
+            pos_constraint.constraint_region.primitives[0].dimensions = {0.05};  // 增加位置容差到5cm
             pos_constraint.weight = 1.0;
 
             // 方向约束
             auto& orient_constraint = move_goal.request.goal_constraints[0].orientation_constraints[0];
             orient_constraint.link_name = "wrist3_Link";
             orient_constraint.header.frame_id = target_pose.header.frame_id;
-            orient_constraint.orientation = target_pose.pose.orientation;
-            orient_constraint.absolute_x_axis_tolerance = 0.1;
-            orient_constraint.absolute_y_axis_tolerance = 0.1;
-            orient_constraint.absolute_z_axis_tolerance = 0.1;
-            orient_constraint.weight = 1.0;
+            orient_constraint.orientation = target_quat;  // 使用验证后的四元数
+            orient_constraint.absolute_x_axis_tolerance = 0.3;  // 增加方向容差
+            orient_constraint.absolute_y_axis_tolerance = 0.3;
+            orient_constraint.absolute_z_axis_tolerance = 0.3;
+            orient_constraint.weight = 0.5;  // 降低方向约束权重
 
             // 发送目标
             auto send_goal_options = rclcpp_action::Client<MoveGroupAction>::SendGoalOptions();
