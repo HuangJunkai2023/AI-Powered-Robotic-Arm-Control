@@ -1,79 +1,3 @@
-# Aubo Robot ROS2
-
-## Compatibility
-
-| **Supported OS**          | **Supported ROS2 distribution**                         |
-|---------------------------|---------------------------------------------------------|
-| Ubuntu 22.04              | [Humble](https://docs.ros.org/en/humble/index.html) |
-
-|**Recommend AUBO Teachpendant Version**    |**Recommend AUBO Hardware Version**  |
-|-------------------------------------------|-------------------------------------|
-|V4.5.48                                    |V3.4.38                              |
-
-## Attention
-Due to the update of aubo, the execution efficiency of the `robotServiceSetRobotPosData2Canbus(double jointAngle [aubo_robot_namespace: ARM-DOF])` API has decreased. The new version may cause the robotic arm to shake during trajectory execution. It is recommended to use the recommended version to run this project.
-
-## Getting Started
-
-This project was developed for ROS2 Humble on Ubuntu 22.04. Other versions of Ubuntu and ROS2 may work, but are not officially supported.
-
-1. Install [ROS2 Humble](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
-
-2. Install `colcon` and additional ROS packages:
-
-    ```bash
-    sudo apt install -y \
-    python3-colcon-common-extensions \
-    python3-rosdep2 \
-    libeigen3-dev \
-    ros-humble-xacro \
-    ros-humble-tinyxml2-vendor \
-    ros-humble-ros2-control \
-    ros-humble-realtime-tools \
-    ros-humble-control-toolbox \
-    ros-humble-moveit \
-    ros-humble-ros2-controllers \
-    ros-humble-test-msgs \
-    ros-humble-joint-state-publisher \
-    ros-humble-joint-state-publisher-gui \
-    ros-humble-robot-state-publisher \
-    ros-humble-rviz2
-    ```
-
-3. Setup workspace:
-
-    ```bash
-    mkdir -p ~/aubo_ros2_ws/src
-    cd ~/aubo_ros2_ws/src
-    git clone -b humble-devel https://github.com/XieShaosong/aubo_robot_ros2.git
-    cd aubo_robot_ros2/
-    ```
-
-4. Install dependencies:
-
-    ```bash
-    cd ~/aubo_ros2_ws
-    rosdep update
-    rosdep install --from-paths src --ignore-src --rosdistro humble -r -y
-    ```
-
-5. Build and source the workspace:
-
-    ```bash
-    cd ~/aubo_ros2_ws
-    source /opt/ros/foxy/setup.bash
-    colcon build --symlink-install
-    source install/setup.bash
-    ```
-
-**NOTE**: Remember to source the setup file and the workspace whenever a new terminal is opened:
-
-```bash
-source /opt/ros/humble/setup.bash
-source ~/aubo_ros2_ws/install/setup.bash
-```
-
-## Usage
 
 ### Using MoveIt
 
@@ -89,3 +13,81 @@ Test sim:
 ```bash
 ros2 launch  aubo_ros2_moveit_config aubo_moveit_sim.launch.py
 ```
+
+## Auto Control System
+
+This workspace includes an automated control system (`aubo_auto_control` package) that can automatically control the robot arm without manual RViz interaction.
+
+### Launch Files
+
+#### Simulation Mode
+
+##### 1. Full Auto Control (with pose publisher)
+Starts complete automated system including pose publisher that cycles through predefined poses:
+```bash
+ros2 launch aubo_auto_control full_auto_control.launch.py
+```
+
+##### 2. Auto Control Only (without pose publisher)
+Starts MoveIt system and auto controller, but requires manual pose publishing:
+```bash
+ros2 launch aubo_auto_control auto_control.launch.py
+```
+
+#### Real Robot Mode
+
+##### Auto Control Only for Real Robot (without pose publisher)
+Connects to real robot with auto controller only (safer - requires manual pose verification):
+```bash
+ros2 launch aubo_auto_control auto_control_real.launch.py robot_ip:=192.168.1.2
+```
+
+**Safety Note:** For real robots, only the controller-only version is provided to prevent automatic execution of potentially unsafe predefined poses. Always verify poses manually before sending to real hardware.
+
+**Note:** Replace `192.168.1.2` with your actual robot IP address.
+
+### Message Formats
+
+#### Target Pose Message
+The auto controller subscribes to `/target_pose` topic with the following message format:
+
+**Topic:** `/target_pose`  
+**Message Type:** `geometry_msgs/msg/PoseStamped`
+
+**Message Structure:**
+```yaml
+header:
+  stamp:
+    sec: 0
+    nanosec: 0
+  frame_id: 'base_link'
+pose:
+  position:
+    x: 0.3      # X position in meters
+    y: 0.2      # Y position in meters  
+    z: 0.4      # Z position in meters
+  orientation:
+    x: 0.0      # Quaternion x
+    y: 0.0      # Quaternion y
+    z: 0.0      # Quaternion z
+    w: 1.0      # Quaternion w
+```
+
+**Example Usage:**
+```bash
+# Publish a single target pose
+ros2 topic pub --once /target_pose geometry_msgs/msg/PoseStamped "
+header:
+  frame_id: 'base_link'
+pose:
+  position:
+    x: 0.3
+    y: 0.2
+    z: 0.4
+  orientation:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0"
+```
+
