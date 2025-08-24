@@ -1,1 +1,0 @@
-from manipulator_mujoco.props.primitive import Primitive
