@@ -1,103 +1,60 @@
-# ROS2 工作空间编译文件和目录
+# ROS2 build and install directories
 build/
 install/
 log/
 
-# Python 编译文件
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-*.egg
-*.egg-info/
-dist/
-build/
-
-# C++ 编译文件
-*.o
-*.a
-*.so
-*.dll
-*.exe
-*.out
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-CTestConfiguration.ini
-CTestCustom.cmake
-CTestTestfile.cmake
-Makefile
-install_manifest.txt
-*.cmake
-*.make
-
-# ROS 特定文件
-*.bag
-*.db3
-*.mcap
-
-# IDE 和编辑器文件
+# IDE and editor files
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# C++ build artifacts
+*.o
+*.obj
+*.exe
+*.dll
+*.lib
+*.a
+*.dylib
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+# Package files
+*.deb
+*.rpm
+*.tar.gz
+
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
-# GitHub 和虚拟环境文件夹
-.github/
-.venv/
-
-# 日志文件
-*.log
-
-# 备份文件
+# Backup files
 *.bak
 *.backup
 *.orig
 
-# 临时文件
+# Temporary files
 *.tmp
 *.temp
 
-# Colcon 特定文件
-COLCON_IGNORE
-colcon_build.rc
-colcon_command_prefix_*.sh
-colcon_command_prefix_*.sh.env
-
-# rosidl 生成的文件
-rosidl_*__arguments*.json
-
-# 动态链接库
-lib*.so*
-
-# 测试结果
-Testing/
-test_results/
-
-# 性能分析文件
-*.prof
-*.gprof
-
-# 调试符号
-*.dSYM/
-
-# 文档生成文件
-doc/html/
-doc/latex/
-*.aux
-*.toc
-*.idx
-*.ind
-*.ilg
-*.log
-*.out
-*.brf
-*.blg
-*.bbl
-
-# 系统文件
-.directory
-*.desktop
+# Ensure src directory and all its contents are tracked
+!src/
+!src/**/*
